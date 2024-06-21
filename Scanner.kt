@@ -107,8 +107,8 @@ fun QRcodeScreen() {
 
     if (hasReadCode.value) { // Condition qui regarde si un QR code a été lu.
 
-        if (URLUtil.isValidUrl(code) && code.contains("https://www.bsoft")) { // Condition qui regarde si le QR code est
-            OpenBrowser(code) // Appelle la fonction OpenBrowser.                   // vérifié et qu'il a pour nom de domaine bsoft.
+        if (URLUtil.isValidUrl(code) && code.contains("(ici mettre une Url avec la nom de domaine)")) { // Condition qui regarde si le QR code est
+            OpenBrowser(code) // Appelle la fonction OpenBrowser.                   // vérifié et qu'il a le bon nom de domaine.
         } else {
             AlertQRcode(onQRcode = { // Appelle la fonction AlertQRcode.
                 hasReadCode.value = false // Boutton de la fonction AlertQRcode qui repasse la valeur
