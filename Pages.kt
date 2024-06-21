@@ -1,6 +1,5 @@
 package com.example.projetstage.composables
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -24,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -73,11 +73,6 @@ fun App() {
         (appSwitch.value == 3) -> {
              Box {
                  SettingsApp()
-                 Marge()
-                 BackButton (onBack = { appSwitch.value = 1 })
-                 LeaveButton(onLeave = { appSwitch.value = 8 })
-                 MargeHideButton()
-                 SettingHideButton()
              }
         }
 
@@ -190,35 +185,14 @@ fun Details(onCamera: () -> Unit) {
 }
 
 @Composable
-fun SettingsApp(/*context: Context*/)
+fun SettingsApp()
 {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center)
-    {
-        Row {
-            Text(text = stringResource(R.string.SettingLanguage), modifier = Modifier.offset(y = (35).dp))
-            Column {
-                ChangeFrButton(onChangeToFr = {  })
-                Spacer(modifier = Modifier.height(10.dp))
-                ChangeAngButton(onChangeToA = {  } )
-            }
-        }
-        Spacer(modifier = Modifier.height(1.dp))
-        Row {
-            Text(text = stringResource(R.string.GoToSettingToAuthorization), modifier = Modifier.offset(x = (-25).dp, y = 30.dp))
-            GoToSettingButton(onGoToSetting = {
-            //    val intent = Intent(
-            //        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            //        Uri.fromParts("package", context.packageName, null)
-            //    )
-            //    context.startActivity(intent)
-            })
-        }
-    }
+    val context = LocalContext.current
+    val intent = Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", context.packageName, null)
+    )
+    context.startActivity(intent)
 }
 
 @Composable
