@@ -1,228 +1,148 @@
 package com.example.projetstage.composables
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.example.projectable.R
-import kotlin.system.exitProcess
 // /_> composables
 
 @Composable
-fun App() {
-    val appSwitch: MutableState<Int> = remember { // Définit une variable de type Boolean qui grace à l'action remember va s'en souvenir.
-        mutableIntStateOf(1)
+fun AlertPermissionDenied(onNotRestartApp: () -> Unit, onQuitApp: () -> Unit) {
+    val alertModifier = Modifier
+        .fillMaxSize() // Pour utilisé toute la place disponible.
+        .wrapContentSize(Alignment.Center) // Pour afficher au centre
+    val cardModifier = Modifier
+        .fillMaxWidth() // Pour la taille.
+        .height(200.dp) // Pour la position.
+        .padding(16.dp) // Pour la position.
+    val buttonLeaveModifier = Modifier
+        .offset(x = (19).dp, y = 138.dp)
+    val buttonModifier = Modifier
+        .offset(x = 215.dp, y = 138.dp)
 
-        // 1 = Accueil
-        // 2 = Détails
-        // 3 = Paramètres
-        // 4 = Caméra
-        // 5 = Quitter
-        // 6 = Quitter depuis Accueil
-        // 7 = Quitter depuis Détails
-        // 8 = Quitter depuis Paramètres
-
-    }
-    when { // similaire à un if
-        (appSwitch.value == 1) -> { // Si cameraSwitch a pour valeur 1.
-            Box(modifier = Modifier.fillMaxSize()) {
-                Home(onCamera = { appSwitch.value = 4 }) // Appelle la fonction ButtonImage() qui peut changer la valeur de cameraSwitch.
-                Marge()
-                DetailsButton (onDetails = { appSwitch.value = 2 })
-                SettingsButton (onHistory = { appSwitch.value = 3 })
-                LeaveButton (onLeave = { appSwitch.value = 6 })
-                MargeHideButton()
-            }
-        }
-
-        (appSwitch.value == 2) -> { // Si cameraSwitch a pour valeur 2.
-            Box { // Superpose les éléments.
-                Details(onCamera = { appSwitch.value = 4 }) // Si cameraSwitch a pour valeur 3.
-                Marge()
-                BackButton (onBack = { appSwitch.value = 1 })
-                LeaveButton(onLeave = { appSwitch.value = 7 })
-                MargeHideButton()
-            }
-
-        }
-
-        (appSwitch.value == 3) -> {
-             Box {
-                 SettingsApp()
-                 Marge()
-                 BackButton (onBack = { appSwitch.value = 1 })
-                 LeaveButton(onLeave = { appSwitch.value = 8 })
-                 MargeHideButton()
-                 SettingHideButton()
-             }
-        }
-
-        (appSwitch.value == 4) ->{
-            Box{
-                QRcodeScreen() // Appelle la fonction QRcodeScreen() qui permet d'utiliser la caméra et le scanner.QRcodeScreen()
-                Viseur() // Appelle la fonction Viseur() qui permet de mettre en place un viseur pour scanner.
-                LeaveButton (onLeave = { appSwitch.value = 5 })
-            }
-        }
-
-        (appSwitch.value == 5) -> {
-            Leave()
-        }
-
-        (appSwitch.value == 6) -> {
-            AlertLeave(onLeave = { appSwitch.value = 5 }, onNotLeave = { appSwitch.value = 1 })
-        }
-
-        (appSwitch.value == 7) -> {
-            AlertLeave(onLeave = { appSwitch.value = 5 }, onNotLeave = { appSwitch.value = 2 })
-        }
-
-        (appSwitch.value == 8) -> {
-            AlertLeave(onLeave = { appSwitch.value = 5 }, onNotLeave = { appSwitch.value = 3 })
-        }
-
-        (appSwitch.value == 9) -> {
-            AlertLeave(onLeave = { appSwitch.value = 5 }, onNotLeave = { appSwitch.value = 4 })
-        }
-    }
-}
-
-@Composable
-fun Home(onCamera: () -> Unit) {
-    val imageModifier = Modifier
-        .size(370.dp)
-        .offset(y = (-50).dp)
-    val buttonCameraModifier = Modifier.size(100.dp)
-    val iconCameraModifier = Modifier
-        .size(60.dp)
-        .offset(y = 18.dp)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-        Image( // Action qui rajoute une image.
-            painter = painterResource(R.drawable.logo), // Ajoute une image.
-            contentDescription = "logo", // Description non voyant
-            modifier = imageModifier // Mise en page de l'image.
-        )
-        Spacer(modifier = Modifier.height((1).dp)) // Permet de mettre un espace.
-        Row(horizontalArrangement = Arrangement.spacedBy(30.dp)) // Action qui dispose les éléments horizontalement.
-        {
-            Image(
-                painter = painterResource(R.drawable.camera),
-                contentDescription = "icon camera", //Description non voyant
-                modifier = iconCameraModifier
-            )
-            Button(
-                onClick = onCamera,
-                modifier = buttonCameraModifier
-            ) { // Pour mettre un boutton.
-                Text(stringResource(R.string.camera)) // Pour mettre un text qui vient des ressources strings.
-            }
-        }
-    }
-}
-
-@Composable
-fun Details(onCamera: () -> Unit) {
-    val textModifier = Modifier
-        .size(150.dp)
-        .offset(y = 40.dp)
-    val buttonCameraModifier = Modifier
-        .size(100.dp)
-        .offset(y = 20.dp)
-    val iconCameraModifier = Modifier
-        .size(60.dp)
-        .offset(y = 38.dp)
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text(
-            stringResource(R.string.textDetailsIntro),
-            modifier = textModifier.offset(y = (-50).dp),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height((1).dp)) // Permet de mettre un espace.
-        Text(
-            stringResource(R.string.textDetailsApp),
-            modifier = textModifier.offset(y = (-40).dp),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height((30).dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(30.dp)) // Action qui dispose les éléments horizontalement.
-        {
-            Image(
-                painter = painterResource(R.drawable.camera), //Ajoute une image.
-                contentDescription = "Icon camera",
-                modifier = iconCameraModifier
-            )
-            Button(onClick = onCamera, modifier = buttonCameraModifier) { // Pour mettre un boutton.
-                Text(stringResource(R.string.camera)) // Pour mettre un text qui vient des ressources strings.
-            }
-        }
-    }
-}
-
-@Composable
-fun SettingsApp(/*context: Context*/)
-{
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center)
+    Dialog(onDismissRequest = {}) // Permet d'afficher un pop-up.
     {
-        Row {
-            Text(text = stringResource(R.string.SettingLanguage), modifier = Modifier.offset(y = (35).dp))
-            Column {
-                ChangeFrButton(onChangeToFr = {  })
-                Spacer(modifier = Modifier.height(10.dp))
-                ChangeAngButton(onChangeToA = {  } )
-            }
+        Card(
+            modifier = cardModifier,
+            shape = RoundedCornerShape(16.dp)
+        ) // Pour mettre un bloc pour afficher le pop-up.
+        {
+            Text(
+                stringResource(R.string.alertPermission),
+                modifier = alertModifier
+            ) // Ajoute le texte alertPermission contenue dans les strings.
         }
-        Spacer(modifier = Modifier.height(1.dp))
-        Row {
-            Text(text = stringResource(R.string.GoToSettingToAuthorization), modifier = Modifier.offset(x = (-25).dp, y = 30.dp))
-            GoToSettingButton(onGoToSetting = {
-            //    val intent = Intent(
-            //        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            //        Uri.fromParts("package", context.packageName, null)
-            //    )
-            //    context.startActivity(intent)
-            })
+        TextButton(onClick = onNotRestartApp, modifier = buttonModifier) {
+            Text(stringResource(R.string.permissionButton))
+        }
+        TextButton(onClick = onQuitApp, modifier = buttonLeaveModifier) {
+            Text(stringResource(R.string.Leave))
         }
     }
 }
 
 @Composable
-fun Leave()
-{
-    exitProcess(-1)
+fun AlertPermissionAccept(onRestartApp: () -> Unit = {}) {
+    val alertModifier = Modifier
+        .fillMaxSize() // Pour la taille.
+        .wrapContentSize(Alignment.Center) // Pour la position.
+    val cardModifier = Modifier
+        .fillMaxWidth() // Pour la position.
+        .height(200.dp) // Pour la position.
+        .padding(16.dp) // Pour la position.
+    val buttonModifier = Modifier
+        .offset(x = 215.dp, y = 138.dp)
+
+    Dialog(onDismissRequest = {})
+    {
+        Card(
+            modifier = cardModifier,
+            shape = RoundedCornerShape(16.dp)
+        ) // Permet d'afficher un pop-up.
+        {
+            Text(
+                stringResource(R.string.alertPermissionAccept),
+                modifier = alertModifier
+            ) // Ajoute le texte alertPermissionAccept contenue dans les strings.
+        }
+        TextButton(
+            onClick = onRestartApp,
+            modifier = buttonModifier
+        ) {//Ajoute un boutton qui appelle la fonction on RestartApp.
+            Text(stringResource(R.string.permissionButton)) //Ajoute le texte permissionButton pour mettre sur le boutton.
+        }
+    }
+}
+
+@Composable
+fun AlertQRcode(onQRcode: () -> Unit) {
+    val alertModifier = Modifier
+        .fillMaxSize() // Pour utilisé toute la place disponible.
+        .wrapContentSize(Alignment.Center) // Pour afficher au centre
+    val cardModifier = Modifier
+        .fillMaxWidth() // Pour la taille.
+        .height(200.dp) // Pour la position.
+        .padding(16.dp) // Pour la position.
+    val buttonModifier = Modifier.offset(x = 215.dp, y = 138.dp)
+    Dialog(onDismissRequest = {}) // Permet d'afficher un pop-up.
+    {
+        Card( // Pour mettre un bloc pour afficher le pop-up.
+            modifier = cardModifier,
+            shape = RoundedCornerShape(16.dp)
+        )
+        {
+            Text(
+                stringResource(R.string.alertQRcode), // Ajoute un texte contenue dans les strings.
+                modifier = alertModifier
+            )
+        }
+        TextButton(onClick = onQRcode, modifier = buttonModifier) { // Ajoute un boutton
+            Text(stringResource(R.string.permissionButton)) // Ajoute un text pour mettre sur le boutton.
+        }
+    }
+}
+
+
+@Composable
+fun AlertLeave(onLeave: () -> Unit, onNotLeave: () -> Unit) {
+    val alertModifier = Modifier
+        .fillMaxSize() // Pour utilisé toute la place disponible.
+        .wrapContentSize(Alignment.Center) // Pour afficher au centre
+    val cardModifier = Modifier
+        .fillMaxWidth() // Pour la taille.
+        .height(200.dp) // Pour la position.
+        .padding(16.dp) // Pour la position.
+    val buttonLeaveModifier = Modifier
+        .offset(x = 234.dp, y = 138.dp)
+    val buttonBackModifier = Modifier
+        .offset(x = 18.dp, y = 138.dp)
+    Dialog(onDismissRequest = {}) // Permet d'afficher un pop-up.
+    {
+        Card( // Pour mettre un bloc pour afficher le pop-up.
+            modifier = cardModifier,
+            shape = RoundedCornerShape(16.dp))
+        {
+            Text(
+                stringResource(R.string.LeaveConfirm), // Ajoute un texte contenue dans les strings.
+                modifier = alertModifier) }
+        TextButton(onClick = onLeave, modifier = buttonLeaveModifier) { // Ajoute un boutton
+            Text(stringResource(R.string.Leave)) // Ajoute un text pour mettre sur le boutton.
+        }
+        TextButton(onClick = onNotLeave, modifier = buttonBackModifier) { // Ajoute un boutton
+            Text(stringResource(R.string.back)) // Ajoute un text pour mettre sur le boutton.
+        }
+    }
 }
